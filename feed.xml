@@ -3,26 +3,26 @@
   <channel>
     <title>WebSiteOps</title>
     <description>The Website Ops blog.</description>
-    <link>http://www.websiteops.com/</link>
-    <atom:link href="http://www.websiteops.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 05 Aug 2014 22:07:11 -0400</pubDate>
-    <lastBuildDate>Tue, 05 Aug 2014 22:07:11 -0400</lastBuildDate>
-    <generator>Jekyll v2.2.0</generator>
+    <link>https://www.websiteops.com//</link>
+    <atom:link href="https://www.websiteops.com//feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Thu, 26 Mar 2015 16:57:14 -0400</pubDate>
+    <lastBuildDate>Thu, 26 Mar 2015 16:57:14 -0400</lastBuildDate>
+    <generator>Jekyll v2.4.0</generator>
     
       <item>
         <title>True Power of the Cloud</title>
-        <description>&lt;p&gt;When comparing the cloud to the old ways, lots of terms are thrown around. ROI, scalibility, rapid development and deployment, ect, ect. The cloud is great for spinning massive amount of infrastructure quickly, but the true power comes with shutting it off. Pay for what you use is the power behind the cloud. Now where I am in the US internet to the home is I pay $XX a month for 50/25MBs. No matter how much I actually use the internet. No given the fact that FIOS really throttles what we can watch anyways. The true limit of how much bandwidth we can consume in a billing period is far lower. Even watch TV from FIOS is artifacted crap. &lt;/p&gt;
+        <description>&lt;p&gt;When comparing the cloud to the old ways, lots of terms are thrown around. ROI, scalibility, rapid development and deployment, ect, ect. The cloud is great for spinning massive amount of infrastructure quickly, but the true power comes with shutting it off. Pay for what you use is the power behind the cloud. Now where I am in the US internet to the home is I pay $XX a month for 50/25MBs. No matter how much I actually use the internet. No given the fact that FIOS really throttles what we can watch anyways. The true limit of how much bandwidth we can consume in a billing period is far lower. Even watch TV from FIOS is artifacted crap.&lt;/p&gt;
 
-&lt;p&gt;But what am I really paying for. Am I paying for 50Mb/s download from everywhere on the internet? Or is it 50Mb/s to Verizon’s switch and from there it is whatever speed Verizon feels like giving you at the time? I’ve never read the fine print on my service contract, but my assumption with home internet has always been you get upto the advertised speed but there is no gaurrenty of speed. &lt;/p&gt;
+&lt;p&gt;But what am I really paying for. Am I paying for 50Mb/s download from everywhere on the internet? Or is it 50Mb/s to Verizon’s switch and from there it is whatever speed Verizon feels like giving you at the time? I’ve never read the fine print on my service contract, but my assumption with home internet has always been you get upto the advertised speed but there is no gaurrenty of speed.&lt;/p&gt;
 
-&lt;p&gt;So what would happen if FIOS gave access to all the bandwidth avaible and I paid per GB that I used in a billing period. For me utilies like water and power work this way. When the power goes out I do not pay for those Watts I do not consume. So when my internet goes out I would not pay for those bits. Well that sounds good, right. 
-Services like water and power, I do not have a choice on what company I use for these services. There is only one water or power company in my area. When they raise rates I have no choice but to pay. I cannot look at other services. Also each of these utitlies are something we always talk about around conservation. We make a effort to conserve water and power. &lt;/p&gt;
+&lt;p&gt;So what would happen if FIOS gave access to all the bandwidth avaible and I paid per GB that I used in a billing period. For me utilies like water and power work this way. When the power goes out I do not pay for those Watts I do not consume. So when my internet goes out I would not pay for those bits. Well that sounds good, right.
+Services like water and power, I do not have a choice on what company I use for these services. There is only one water or power company in my area. When they raise rates I have no choice but to pay. I cannot look at other services. Also each of these utitlies are something we always talk about around conservation. We make a effort to conserve water and power.&lt;/p&gt;
 
-&lt;p&gt;Would we then have to conserve bits? &lt;/p&gt;
+&lt;p&gt;Would we then have to conserve bits?&lt;/p&gt;
 </description>
         <pubDate>Sun, 03 Aug 2014 17:45:00 -0400</pubDate>
-        <link>http://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</link>
-        <guid isPermaLink="true">http://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</guid>
+        <link>https://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</link>
+        <guid isPermaLink="true">https://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</guid>
         
         <category>cloud</category>
         
@@ -40,8 +40,8 @@ Services like water and power, I do not have a choice on what company I use for 
         <description>&lt;p&gt;What is the Open Graph protocol? Per Facebook, it “enables any web page to become a rich object in a social graph.” The documentation goes on to state that “to turn your web pages into graph objects, you need to add basic metadata to your page.” Put more simply, add Open Graph meta tags to your website to have greater control over how your content is displayed when shared via Facebook.&lt;/p&gt;
 </description>
         <pubDate>Fri, 01 Aug 2014 17:15:00 -0400</pubDate>
-        <link>http://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
-        <guid isPermaLink="true">http://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
+        <link>https://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
+        <guid isPermaLink="true">https://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
         
         <category>jekyllrb</category>
         
@@ -70,8 +70,8 @@ As the implementation converges, we’ll provide release candidate Omnibus packa
 We’re looking forward to learning more about how you’d like to use DSC with Chef, so please share your thoughts via the RFC. We can’t wait to deliver the power of DSC in Chef to the community.&lt;/p&gt;
 </description>
         <pubDate>Wed, 30 Jul 2014 20:05:39 -0400</pubDate>
-        <link>http://www.websiteops.com/devops/2014/07/30/getting-ready-for-chef+powershell/</link>
-        <guid isPermaLink="true">http://www.websiteops.com/devops/2014/07/30/getting-ready-for-chef+powershell/</guid>
+        <link>https://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</link>
+        <guid isPermaLink="true">https://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</guid>
         
         <category>windows</category>
         
@@ -110,8 +110,8 @@ Ultimately, the only way for corporate and institutional interests to make sure 
 Or, as Cowie said, “The remedy for all of these is politically neutral”: More cable.&lt;/p&gt;
 </description>
         <pubDate>Wed, 30 Jul 2014 18:56:39 -0400</pubDate>
-        <link>http://www.websiteops.com/network/2014/07/30/how-internet-providers-get-around-war-zones/</link>
-        <guid isPermaLink="true">http://www.websiteops.com/network/2014/07/30/how-internet-providers-get-around-war-zones/</guid>
+        <link>https://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</link>
+        <guid isPermaLink="true">https://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</guid>
         
         <category>network</category>
         
