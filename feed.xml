@@ -3,10 +3,10 @@
   <channel>
     <title>WebSiteOps</title>
     <description>The Website Ops blog.</description>
-    <link>https://www.websiteops.com//</link>
-    <atom:link href="https://www.websiteops.com//feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 17 Apr 2015 11:05:02 -0400</pubDate>
-    <lastBuildDate>Fri, 17 Apr 2015 11:05:02 -0400</lastBuildDate>
+    <link>https://www.websiteops.comhttps://www.websiteops.com//</link>
+    <atom:link href="https://www.websiteops.comhttps://www.websiteops.com//feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 17 Apr 2015 11:19:12 -0400</pubDate>
+    <lastBuildDate>Fri, 17 Apr 2015 11:19:12 -0400</lastBuildDate>
     <generator>Jekyll v2.4.0</generator>
     
       <item>
@@ -21,8 +21,8 @@ Services like water and power, I do not have a choice on what company I use for 
 &lt;p&gt;Would we then have to conserve bits?&lt;/p&gt;
 </description>
         <pubDate>Sun, 03 Aug 2014 17:45:00 -0400</pubDate>
-        <link>https://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</link>
-        <guid isPermaLink="true">https://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</guid>
+        <link>https://www.websiteops.comhttps://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</link>
+        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com//cloud/2014/08/03/true-power-of-the-cloud/</guid>
         
         <category>cloud</category>
         
@@ -40,8 +40,8 @@ Services like water and power, I do not have a choice on what company I use for 
         <description>&lt;p&gt;What is the Open Graph protocol? Per Facebook, it “enables any web page to become a rich object in a social graph.” The documentation goes on to state that “to turn your web pages into graph objects, you need to add basic metadata to your page.” Put more simply, add Open Graph meta tags to your website to have greater control over how your content is displayed when shared via Facebook.&lt;/p&gt;
 </description>
         <pubDate>Fri, 01 Aug 2014 17:15:00 -0400</pubDate>
-        <link>https://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
-        <guid isPermaLink="true">https://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
+        <link>https://www.websiteops.comhttps://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
+        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com//web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
         
         <category>jekyllrb</category>
         
@@ -70,8 +70,8 @@ As the implementation converges, we’ll provide release candidate Omnibus packa
 We’re looking forward to learning more about how you’d like to use DSC with Chef, so please share your thoughts via the RFC. We can’t wait to deliver the power of DSC in Chef to the community.&lt;/p&gt;
 </description>
         <pubDate>Wed, 30 Jul 2014 20:05:39 -0400</pubDate>
-        <link>https://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</link>
-        <guid isPermaLink="true">https://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</guid>
+        <link>https://www.websiteops.comhttps://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</link>
+        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com//devops/2014/07/30/getting-ready-for-chef+powershell/</guid>
         
         <category>windows</category>
         
@@ -110,8 +110,8 @@ Ultimately, the only way for corporate and institutional interests to make sure 
 Or, as Cowie said, “The remedy for all of these is politically neutral”: More cable.&lt;/p&gt;
 </description>
         <pubDate>Wed, 30 Jul 2014 18:56:39 -0400</pubDate>
-        <link>https://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</link>
-        <guid isPermaLink="true">https://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</guid>
+        <link>https://www.websiteops.comhttps://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</link>
+        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com//network/2014/07/30/how-internet-providers-get-around-war-zones/</guid>
         
         <category>network</category>
         
