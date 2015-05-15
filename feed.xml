@@ -5,9 +5,88 @@
     <description>The Website Ops blog.</description>
     <link>https://www.websiteops.comhttps://www.websiteops.com/</link>
     <atom:link href="https://www.websiteops.comhttps://www.websiteops.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 17 Apr 2015 14:13:51 -0400</pubDate>
-    <lastBuildDate>Fri, 17 Apr 2015 14:13:51 -0400</lastBuildDate>
+    <pubDate>Thu, 14 May 2015 23:17:28 -0400</pubDate>
+    <lastBuildDate>Thu, 14 May 2015 23:17:28 -0400</lastBuildDate>
     <generator>Jekyll v2.4.0</generator>
+    
+      <item>
+        <title>Connecting AWS Regions with Openswan</title>
+        <description>&lt;p&gt;Connected AWS regions is not as simple as it should be. Hopefully AWS will someday provide a VPC Peering connection between regions but until then we need to connect regions with EC2 instances. A couple of techniques we have read up on were using 2 EC2 instances. One in the West region connecting to the East region. In another white paper we found Connecting Multiple VPCs with Astaro Security Gateway https://aws.amazon.com/articles/1909971399457482. This worked ok for a while, but seemed to be expensive and not as performant as it should be. &lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;For a number of reason the Sophos instances from the AWS MarketPlace no longer kept up with what we needed.
+- They were built on PV and not HVM. This limited the type of instances we could us.
+- Support is limited to the forums unless you pay a additional fee for vendor
+- HA inside of AWS is not a options on the Sophos platform
+- Scripting of HA is limited to outside of the Sophos instances using health check for yet another instance.
+- No ability to enable AWS enhanced networking&lt;/p&gt;
+
+&lt;p&gt;Enhanced network is support for SR-IOV, which is short lets a single physical Ethernet adapter show up as multiple adapters and the Hypervisor and thus your EC2 instance does not need as much CPU to push the same amount of network traffic. My understanding is it is like a TCP offload engine for virtualization. Less interrupts are use for networking and can be freed up for your app.
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html&lt;/p&gt;
+
+&lt;p&gt;If you are not passing very much traffic over the VPN connection you can start with a small instance. As soon as you need to do something like replication a database over VPN connection you will need to start increasing the size of your instance. http://aws.amazon.com/ec2/instance-types/
+I have yet to find documented with the instance types and Network Performance what High, Moderate and Low equates to in bits/sec. The rule of thumb I use is High is about 1Gb/sec and then 1/2 the network speed as the instance size decrease.
+I have also been bit by relying on m3.medium instances too many times and getting poor network performance and ultimately having to re-size up to a larger instance like a c4.large&lt;/p&gt;
+
+&lt;p&gt;Now that we have the instance type squared away. We have decided to use Amazon Linux with enhanced networking enabled. Next I am going to choose the IPsec server. For this I choose Openswan. Simply because I have much more experience with Openswan than any of the other services.
+To get Openswan installed on Amazon Linux:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yum update
+yum install openswan&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From here I am going to attach this EC2 instance running Openswan in the West to the AWS VPC VPN in the East. Generate you VPN config in the AWS Console on the East coast. For this instance I am using static routing and download the generic VPN config.
+Because the AWS settings are static and AWS generates the PSK for you from here it is pretty straight forward. You just need to set the Openswan connection config to match AWS:&lt;/p&gt;
+
+&lt;p&gt;Here is the secret sauce in Openswan&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;l-Scalar-Plain&quot;&gt;conn west-2-east&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;type=tunnel&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;authby=secret&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;left=instance_ip&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftid=elastic_ip&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftnexthop=%defaultroute&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftsubnet=west_coast_subnet&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;right=vpg_ip&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rightnexthop=%defaultroute&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rightsubnet=east_coast_subnet&lt;/span&gt;
+
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;phase2=esp&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;phase2alg=aes128-sha1&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;ike=aes128-sha1&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;ikelifetime=28800s&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;salifetime=3600s&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;pfs=yes&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;auto=start&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rekey=yes&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;keyingtries=%forever&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpddelay=10&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpdtimeout=60&lt;/span&gt;
+  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpdaction=restart_by_peer&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Sources&lt;/p&gt;
+
+&lt;p&gt;Connecting Multiple VPCs with EC2 Instances (IPSec)
+https://aws.amazon.com/articles/5472675506466066&lt;/p&gt;
+
+&lt;p&gt;HA NAT:
+http://aws.amazon.com/articles/2781451301784570&lt;/p&gt;
+
+&lt;p&gt;Enhanced Networking
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html&lt;/p&gt;
+</description>
+        <pubDate>Wed, 13 May 2015 21:00:00 -0400</pubDate>
+        <link>https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</link>
+        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</guid>
+        
+        <category>cloud</category>
+        
+        <category>aws</category>
+        
+        <category>openswan</category>
+        
+        
+        <category>cloud</category>
+        
+      </item>
     
       <item>
         <title>True Power of the Cloud</title>

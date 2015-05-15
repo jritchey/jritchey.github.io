@@ -5,29 +5,44 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>WebSiteOps</title>
+    <title>Connecting AWS Regions with Openswan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The Website Ops blog.">
-    <link rel="canonical" href="https://www.websiteops.comhttps://www.websiteops.com/">
+    <link rel="canonical" href="https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="WebSiteOps" property="og:site_name">
     
-      <meta content="WebSiteOps" property="og:title">
+      <meta content="Connecting AWS Regions with Openswan" property="og:title">
     
     
-      <meta content="website" property="og:type">
+      <meta content="article" property="og:type">
     
     
       <meta content="The Website Ops blog." property="og:description">
     
     
-      <meta content="https://www.websiteops.com/" property="og:url">
+      <meta content="https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/" property="og:url">
     
     
+      <meta content="2015-05-13T21:00:00-04:00" property="article:published_time">
+      <meta content="https://www.websiteops.com/about/" property="article:author">
     
-      <meta content="https://www.websiteops.com/assets/img/logo-high-resolution.png" property="og:image">
+    
+      <meta content="https://www.websiteops.com/assets/img/posts/http://localhost:4000/images/12169607423_839b980c9e.jpg" property="og:image">
     
     
+      
+      <meta content="cloud" property="article:section">
+      
+    
+    
+      
+      <meta content="cloud" property="article:tag">
+      
+      <meta content="aws" property="article:tag">
+      
+      <meta content="openswan" property="article:tag">
+      
     
 
     <!-- Bootstrap Core CSS -->
@@ -119,97 +134,79 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
               
-              <div class="post-preview">
-                  <a href=/cloud/2015/05/13/connecting-aws-regions-with-openswan/>
-                      <h2 class="post-title">
-                          Connecting AWS Regions with Openswan
-                      </h2>
-                      <h3 class="post-subtitle">
-                        <p>Connected AWS regions is not as simple as it should be. Hopefully AWS will someday provide a VPC Peering connection between regions but until then we need to connect regions with EC2 instances. A couple of techniques we have read up on were using 2 EC2 instances. One in the West region connecting to the East region. In another white paper we found Connecting Multiple VPCs with Astaro Security Gateway https://aws.amazon.com/articles/1909971399457482. This worked ok for a while, but seemed to be expensive and not as performant as it should be. <!--more--></p>
 
+              <div class="post">
+  <header class="post-header">
+    <h1>Connecting AWS Regions with Openswan</h1>
+    <p class="meta">May 13, 2015</p>
+  </header>
 
-                      </h3>
-                  </a>
-                  <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on 2015-05-13 21:00:00 -0400</p>
-              </div>
-              <hr>
-              
-              <div class="post-preview">
-                  <a href=/cloud/2014/08/03/true-power-of-the-cloud/>
-                      <h2 class="post-title">
-                          True Power of the Cloud
-                      </h2>
-                      <h3 class="post-subtitle">
-                        <p>When comparing the cloud to the old ways, lots of terms are thrown around. ROI, scalibility, rapid development and deployment, ect, ect. The cloud is great for spinning massive amount of infrastructure quickly, but the true power comes with shutting it off. Pay for what you use is the power behind the cloud. Now where I am in the US internet to the home is I pay $XX a month for 50/25MBs. No matter how much I actually use the internet. No given the fact that FIOS really throttles what we can watch anyways. The true limit of how much bandwidth we can consume in a billing period is far lower. Even watch TV from FIOS is artifacted crap.</p>
+  <article class="post-content">
+  <p>Connected AWS regions is not as simple as it should be. Hopefully AWS will someday provide a VPC Peering connection between regions but until then we need to connect regions with EC2 instances. A couple of techniques we have read up on were using 2 EC2 instances. One in the West region connecting to the East region. In another white paper we found Connecting Multiple VPCs with Astaro Security Gateway https://aws.amazon.com/articles/1909971399457482. This worked ok for a while, but seemed to be expensive and not as performant as it should be. <!--more--></p>
 
+<p>For a number of reason the Sophos instances from the AWS MarketPlace no longer kept up with what we needed.
+- They were built on PV and not HVM. This limited the type of instances we could us.
+- Support is limited to the forums unless you pay a additional fee for vendor
+- HA inside of AWS is not a options on the Sophos platform
+- Scripting of HA is limited to outside of the Sophos instances using health check for yet another instance.
+- No ability to enable AWS enhanced networking</p>
 
-                      </h3>
-                  </a>
-                  <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on 2014-08-03 17:45:00 -0400</p>
-              </div>
-              <hr>
-              
-              <div class="post-preview">
-                  <a href=/web/2014/08/01/adding-open-graph-tags-to-jekyll/>
-                      <h2 class="post-title">
-                          Adding Open Graph Tags to Jekyll
-                      </h2>
-                      <h3 class="post-subtitle">
-                        <p>What is the Open Graph protocol? Per Facebook, it “enables any web page to become a rich object in a social graph.” The documentation goes on to state that “to turn your web pages into graph objects, you need to add basic metadata to your page.” Put more simply, add Open Graph meta tags to your website to have greater control over how your content is displayed when shared via Facebook.</p>
+<p>Enhanced network is support for SR-IOV, which is short lets a single physical Ethernet adapter show up as multiple adapters and the Hypervisor and thus your EC2 instance does not need as much CPU to push the same amount of network traffic. My understanding is it is like a TCP offload engine for virtualization. Less interrupts are use for networking and can be freed up for your app.
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
 
+<p>If you are not passing very much traffic over the VPN connection you can start with a small instance. As soon as you need to do something like replication a database over VPN connection you will need to start increasing the size of your instance. http://aws.amazon.com/ec2/instance-types/
+I have yet to find documented with the instance types and Network Performance what High, Moderate and Low equates to in bits/sec. The rule of thumb I use is High is about 1Gb/sec and then 1/2 the network speed as the instance size decrease.
+I have also been bit by relying on m3.medium instances too many times and getting poor network performance and ultimately having to re-size up to a larger instance like a c4.large</p>
 
-                      </h3>
-                  </a>
-                  <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on 2014-08-01 17:15:00 -0400</p>
-              </div>
-              <hr>
-              
-              <div class="post-preview">
-                  <a href=/devops/2014/07/30/getting-ready-for-chef+powershell/>
-                      <h2 class="post-title">
-                          Getting Ready for Chef + PowerShell DSC
-                      </h2>
-                      <h3 class="post-subtitle">
-                        <p>Today we’d like to share the Supermarket debut of the PowerShell DSC cookbook for Chef, an early preview of Chef integration with PowerShell Desired State Configuration (DSC) on Windows. This cookbook allows you to author recipes using any DSC resources available on your system, seamlessly surfacing them as Chef resources you can use in your cookbooks. Integration at this level can greatly expand the universe of manageable configuration points and applications for Windows Chef users.</p>
+<p>Now that we have the instance type squared away. We have decided to use Amazon Linux with enhanced networking enabled. Next I am going to choose the IPsec server. For this I choose Openswan. Simply because I have much more experience with Openswan than any of the other services.
+To get Openswan installed on Amazon Linux:</p>
 
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">yum update
+yum install openswan</code></pre></div>
 
-                      </h3>
-                  </a>
-                  <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on 2014-07-30 20:05:39 -0400</p>
-              </div>
-              <hr>
-              
+<p>From here I am going to attach this EC2 instance running Openswan in the West to the AWS VPC VPN in the East. Generate you VPN config in the AWS Console on the East coast. For this instance I am using static routing and download the generic VPN config.
+Because the AWS settings are static and AWS generates the PSK for you from here it is pretty straight forward. You just need to set the Openswan connection config to match AWS:</p>
 
-              <div class="home">
+<p>Here is the secret sauce in Openswan</p>
 
-    
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">conn west-2-east</span>
+  <span class="l-Scalar-Plain">type=tunnel</span>
+  <span class="l-Scalar-Plain">authby=secret</span>
+  <span class="l-Scalar-Plain">left=instance_ip</span>
+  <span class="l-Scalar-Plain">leftid=elastic_ip</span>
+  <span class="l-Scalar-Plain">leftnexthop=%defaultroute</span>
+  <span class="l-Scalar-Plain">leftsubnet=west_coast_subnet</span>
+  <span class="l-Scalar-Plain">right=vpg_ip</span>
+  <span class="l-Scalar-Plain">rightnexthop=%defaultroute</span>
+  <span class="l-Scalar-Plain">rightsubnet=east_coast_subnet</span>
 
-      <h3><a href="/cloud/2014/08/03/true-power-of-the-cloud/">True Power of the Cloud</a></h3>
-      <p class="author">
-        <span class="date">2014-08-03 17:45:00 -0400</span>
-      </p>
-      <div class="content">
-        <p>When comparing the cloud to the old ways, lots of terms are thrown around. ROI, scalibility, rapid development and deployment, ect, ect. The cloud is great for spinning massive amount of infrastructure quickly, but the true power comes with shutting it off. Pay for what you use is the power behind the cloud. Now where I am in the US internet to the home is I pay $XX a month for 50/25MBs. No matter how much I actually use the internet. No given the fact that FIOS really throttles what we can watch anyways. The true limit of how much bandwidth we can consume in a billing period is far lower. Even watch TV from FIOS is artifacted crap.</p>
+  <span class="l-Scalar-Plain">phase2=esp</span>
+  <span class="l-Scalar-Plain">phase2alg=aes128-sha1</span>
+  <span class="l-Scalar-Plain">ike=aes128-sha1</span>
+  <span class="l-Scalar-Plain">ikelifetime=28800s</span>
+  <span class="l-Scalar-Plain">salifetime=3600s</span>
+  <span class="l-Scalar-Plain">pfs=yes</span>
+  <span class="l-Scalar-Plain">auto=start</span>
+  <span class="l-Scalar-Plain">rekey=yes</span>
+  <span class="l-Scalar-Plain">keyingtries=%forever</span>
+  <span class="l-Scalar-Plain">dpddelay=10</span>
+  <span class="l-Scalar-Plain">dpdtimeout=60</span>
+  <span class="l-Scalar-Plain">dpdaction=restart_by_peer</span></code></pre></div>
 
+<p>Sources</p>
 
-      </div>
-    
+<p>Connecting Multiple VPCs with EC2 Instances (IPSec)
+https://aws.amazon.com/articles/5472675506466066</p>
 
-      <h3><a href="/web/2014/08/01/adding-open-graph-tags-to-jekyll/">Adding Open Graph Tags to Jekyll</a></h3>
-      <p class="author">
-        <span class="date">2014-08-01 17:15:00 -0400</span>
-      </p>
-      <div class="content">
-        <p>What is the Open Graph protocol? Per Facebook, it “enables any web page to become a rich object in a social graph.” The documentation goes on to state that “to turn your web pages into graph objects, you need to add basic metadata to your page.” Put more simply, add Open Graph meta tags to your website to have greater control over how your content is displayed when shared via Facebook.</p>
+<p>HA NAT:
+http://aws.amazon.com/articles/2781451301784570</p>
 
+<p>Enhanced Networking
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
 
-      </div>
-    
-
-  <p class="rss-subscribe">subscribe <a href="https://www.websiteops.com/feed.xml">via RSS</a></p>
+  </article>
 
 </div>
-
               <!-- Pager -->
                 <ul class="pager">
                     <li class="next">
