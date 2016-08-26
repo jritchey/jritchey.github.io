@@ -5,10 +5,11 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="amphtml" href="https://mercury.postlight.com/amp?url=https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">
     <title>Connecting AWS Regions with Openswan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The Website Ops blog.">
-    <link rel="canonical" href="https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">
+    <link rel="canonical" href="https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="WebSiteOps" property="og:site_name">
     
@@ -49,7 +50,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="https://www.websiteops.com/css/clean-blog.min.css" rel="stylesheet">
+    <link href="/css/clean-blog.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -91,20 +92,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="https://www.websiteops.com/">WebSite Ops</a>
+                <a class="navbar-brand" href="/">WebSite Ops</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="https://www.websiteops.com/">Home</a>
+                        <a href="/">Home</a>
                     </li>
                     <li>
-                        <a href="https://www.websiteops.com/about">About</a>
-                    </li>
-                    <li>
-                        <a href="https://www.websiteops.com/contact">Contact</a>
+                        <a href="/about">About</a>
                     </li>
                 </ul>
             </div>
@@ -115,7 +113,7 @@
 
     <!-- Page Header -->
     <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header" style="background-image: url('https://www.websiteops.com/images/home-bg.jpg')">
+    <header class="intro-header" style="background-image: url('/images/home-bg.jpg')">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -135,10 +133,11 @@
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
               
 
-              <div class="post">
+              
+                <div class="post">
   <header class="post-header">
     <h1>Connecting AWS Regions with Openswan</h1>
-    <p class="meta">May 13, 2015</p>
+    <p class="meta">May 13, 2015 • joe_ritchey</p>
   </header>
 
   <article class="post-content">
@@ -161,37 +160,37 @@ I have also been bit by relying on m3.medium instances too many times and gettin
 <p>Now that we have the instance type squared away. We have decided to use Amazon Linux with enhanced networking enabled. Next I am going to choose the IPsec server. For this I choose Openswan. Simply because I have much more experience with Openswan than any of the other services.
 To get Openswan installed on Amazon Linux:</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">yum update
-yum install openswan</code></pre></div>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">yum update
+yum install openswan</code></pre></figure>
 
 <p>From here I am going to attach this EC2 instance running Openswan in the West to the AWS VPC VPN in the East. Generate you VPN config in the AWS Console on the East coast. For this instance I am using static routing and download the generic VPN config.
 Because the AWS settings are static and AWS generates the PSK for you from here it is pretty straight forward. You just need to set the Openswan connection config to match AWS:</p>
 
 <p>Here is the secret sauce in Openswan</p>
 
-<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">conn west-2-east</span>
-  <span class="l-Scalar-Plain">type=tunnel</span>
-  <span class="l-Scalar-Plain">authby=secret</span>
-  <span class="l-Scalar-Plain">left=instance_ip</span>
-  <span class="l-Scalar-Plain">leftid=elastic_ip</span>
-  <span class="l-Scalar-Plain">leftnexthop=%defaultroute</span>
-  <span class="l-Scalar-Plain">leftsubnet=west_coast_subnet</span>
-  <span class="l-Scalar-Plain">right=vpg_ip</span>
-  <span class="l-Scalar-Plain">rightnexthop=%defaultroute</span>
-  <span class="l-Scalar-Plain">rightsubnet=east_coast_subnet</span>
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="s">conn west-2-east</span>
+  <span class="s">type=tunnel</span>
+  <span class="s">authby=secret</span>
+  <span class="s">left=instance_ip</span>
+  <span class="s">leftid=elastic_ip</span>
+  <span class="s">leftnexthop=%defaultroute</span>
+  <span class="s">leftsubnet=west_coast_subnet</span>
+  <span class="s">right=vpg_ip</span>
+  <span class="s">rightnexthop=%defaultroute</span>
+  <span class="s">rightsubnet=east_coast_subnet</span>
 
-  <span class="l-Scalar-Plain">phase2=esp</span>
-  <span class="l-Scalar-Plain">phase2alg=aes128-sha1</span>
-  <span class="l-Scalar-Plain">ike=aes128-sha1</span>
-  <span class="l-Scalar-Plain">ikelifetime=28800s</span>
-  <span class="l-Scalar-Plain">salifetime=3600s</span>
-  <span class="l-Scalar-Plain">pfs=yes</span>
-  <span class="l-Scalar-Plain">auto=start</span>
-  <span class="l-Scalar-Plain">rekey=yes</span>
-  <span class="l-Scalar-Plain">keyingtries=%forever</span>
-  <span class="l-Scalar-Plain">dpddelay=10</span>
-  <span class="l-Scalar-Plain">dpdtimeout=60</span>
-  <span class="l-Scalar-Plain">dpdaction=restart_by_peer</span></code></pre></div>
+  <span class="s">phase2=esp</span>
+  <span class="s">phase2alg=aes128-sha1</span>
+  <span class="s">ike=aes128-sha1</span>
+  <span class="s">ikelifetime=28800s</span>
+  <span class="s">salifetime=3600s</span>
+  <span class="s">pfs=yes</span>
+  <span class="s">auto=start</span>
+  <span class="s">rekey=yes</span>
+  <span class="s">keyingtries=%forever</span>
+  <span class="s">dpddelay=10</span>
+  <span class="s">dpdtimeout=60</span>
+  <span class="s">dpdaction=restart_by_peer</span></code></pre></figure>
 
 <p>Sources</p>
 
@@ -207,6 +206,7 @@ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
   </article>
 
 </div>
+              
               <!-- Pager -->
                 <ul class="pager">
                     <li class="next">
@@ -263,7 +263,7 @@ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="https://www.websiteops.com/js/clean-blog.min.js"></script>
+    <script src="/js/clean-blog.min.js"></script>
 
   </body>
 </html>

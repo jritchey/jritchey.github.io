@@ -3,11 +3,11 @@
   <channel>
     <title>WebSiteOps</title>
     <description>The Website Ops blog.</description>
-    <link>https://www.websiteops.comhttps://www.websiteops.com/</link>
-    <atom:link href="https://www.websiteops.comhttps://www.websiteops.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 14 May 2015 23:17:28 -0400</pubDate>
-    <lastBuildDate>Thu, 14 May 2015 23:17:28 -0400</lastBuildDate>
-    <generator>Jekyll v2.4.0</generator>
+    <link>https://www.websiteops.com/</link>
+    <atom:link href="https://www.websiteops.com/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 26 Aug 2016 00:20:39 -0400</pubDate>
+    <lastBuildDate>Fri, 26 Aug 2016 00:20:39 -0400</lastBuildDate>
+    <generator>Jekyll v3.2.1</generator>
     
       <item>
         <title>Connecting AWS Regions with Openswan</title>
@@ -30,37 +30,37 @@ I have also been bit by relying on m3.medium instances too many times and gettin
 &lt;p&gt;Now that we have the instance type squared away. We have decided to use Amazon Linux with enhanced networking enabled. Next I am going to choose the IPsec server. For this I choose Openswan. Simply because I have much more experience with Openswan than any of the other services.
 To get Openswan installed on Amazon Linux:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yum update
-yum install openswan&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yum update
+yum install openswan&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;From here I am going to attach this EC2 instance running Openswan in the West to the AWS VPC VPN in the East. Generate you VPN config in the AWS Console on the East coast. For this instance I am using static routing and download the generic VPN config.
 Because the AWS settings are static and AWS generates the PSK for you from here it is pretty straight forward. You just need to set the Openswan connection config to match AWS:&lt;/p&gt;
 
 &lt;p&gt;Here is the secret sauce in Openswan&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;l-Scalar-Plain&quot;&gt;conn west-2-east&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;type=tunnel&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;authby=secret&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;left=instance_ip&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftid=elastic_ip&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftnexthop=%defaultroute&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;leftsubnet=west_coast_subnet&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;right=vpg_ip&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rightnexthop=%defaultroute&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rightsubnet=east_coast_subnet&lt;/span&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;s&quot;&gt;conn west-2-east&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;type=tunnel&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;authby=secret&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;left=instance_ip&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;leftid=elastic_ip&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;leftnexthop=%defaultroute&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;leftsubnet=west_coast_subnet&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;right=vpg_ip&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;rightnexthop=%defaultroute&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;rightsubnet=east_coast_subnet&lt;/span&gt;
 
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;phase2=esp&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;phase2alg=aes128-sha1&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;ike=aes128-sha1&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;ikelifetime=28800s&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;salifetime=3600s&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;pfs=yes&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;auto=start&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;rekey=yes&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;keyingtries=%forever&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpddelay=10&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpdtimeout=60&lt;/span&gt;
-  &lt;span class=&quot;l-Scalar-Plain&quot;&gt;dpdaction=restart_by_peer&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+  &lt;span class=&quot;s&quot;&gt;phase2=esp&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;phase2alg=aes128-sha1&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;ike=aes128-sha1&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;ikelifetime=28800s&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;salifetime=3600s&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;pfs=yes&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;auto=start&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;rekey=yes&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;keyingtries=%forever&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;dpddelay=10&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;dpdtimeout=60&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;dpdaction=restart_by_peer&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;p&gt;Sources&lt;/p&gt;
 
@@ -74,8 +74,8 @@ http://aws.amazon.com/articles/2781451301784570&lt;/p&gt;
 http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html&lt;/p&gt;
 </description>
         <pubDate>Wed, 13 May 2015 21:00:00 -0400</pubDate>
-        <link>https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</link>
-        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</guid>
+        <link>https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</link>
+        <guid isPermaLink="true">https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/</guid>
         
         <category>cloud</category>
         
@@ -100,8 +100,8 @@ Services like water and power, I do not have a choice on what company I use for 
 &lt;p&gt;Would we then have to conserve bits?&lt;/p&gt;
 </description>
         <pubDate>Sun, 03 Aug 2014 17:45:00 -0400</pubDate>
-        <link>https://www.websiteops.comhttps://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</link>
-        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</guid>
+        <link>https://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</link>
+        <guid isPermaLink="true">https://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/</guid>
         
         <category>cloud</category>
         
@@ -119,8 +119,8 @@ Services like water and power, I do not have a choice on what company I use for 
         <description>&lt;p&gt;What is the Open Graph protocol? Per Facebook, it “enables any web page to become a rich object in a social graph.” The documentation goes on to state that “to turn your web pages into graph objects, you need to add basic metadata to your page.” Put more simply, add Open Graph meta tags to your website to have greater control over how your content is displayed when shared via Facebook.&lt;/p&gt;
 </description>
         <pubDate>Fri, 01 Aug 2014 17:15:00 -0400</pubDate>
-        <link>https://www.websiteops.comhttps://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
-        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
+        <link>https://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</link>
+        <guid isPermaLink="true">https://www.websiteops.com/web/2014/08/01/adding-open-graph-tags-to-jekyll/</guid>
         
         <category>jekyllrb</category>
         
@@ -130,76 +130,6 @@ Services like water and power, I do not have a choice on what company I use for 
         
         
         <category>web</category>
-        
-      </item>
-    
-      <item>
-        <title>Getting Ready for Chef + PowerShell DSC</title>
-        <description>&lt;p&gt;Today we’d like to share the Supermarket debut of the PowerShell DSC cookbook for Chef, an early preview of Chef integration with PowerShell Desired State Configuration (DSC) on Windows. This cookbook allows you to author recipes using any DSC resources available on your system, seamlessly surfacing them as Chef resources you can use in your cookbooks. Integration at this level can greatly expand the universe of manageable configuration points and applications for Windows Chef users.&lt;/p&gt;
-
-&lt;p&gt;For detailed requirements on using this prototype cookbook, please visit the README. The prototype is just the start on our journey to delivering fully realized integration of DSC with Chef which we’re working on now.&lt;/p&gt;
-
-&lt;p&gt;Now stepping back a bit, we actually gave a peek into our latest DSC thinking at July’s Seattle Chef Meetup, which was focused on Chef + DSC. Our discussion was kicked off by Microsoft Distinguished Engineer Jeffrey Snover, the inventor of PowerShell; his introduction set the stage for our demonstration of how Chef and DSC can work together. We also shared the DSC cookbook source code and walked through some of our thinking about making the integration between Chef and DSC both useful and usable.&lt;/p&gt;
-
-&lt;p&gt;We’re still working on the exact shape and implementation of DSC integration, so treat this cookbook as an evaluation release for providing feedback to the community. Here’s what’s next on the path toward comprehensive integration:&lt;/p&gt;
-
-&lt;p&gt;We’ve submitted this Request For Comments (RFC) pull request on Github as the forum for community feedback — please use it to post your suggestions or questions
-As we work through the details of the integration in the RFC, we’ll make implementation progress in a branch of the Chef project repository where users comfortable with Github can test out the latest changes.
-As the implementation converges, we’ll provide release candidate Omnibus packages for anyone not consuming Chef straight from the repository
-We’re looking forward to learning more about how you’d like to use DSC with Chef, so please share your thoughts via the RFC. We can’t wait to deliver the power of DSC in Chef to the community.&lt;/p&gt;
-</description>
-        <pubDate>Wed, 30 Jul 2014 20:05:39 -0400</pubDate>
-        <link>https://www.websiteops.comhttps://www.websiteops.com/devops/2014/07/30/getting-ready-for-chef+powershell/</link>
-        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/devops/2014/07/30/getting-ready-for-chef+powershell/</guid>
-        
-        <category>windows</category>
-        
-        <category>powershell</category>
-        
-        <category>chef</category>
-        
-        <category>automation</category>
-        
-        
-        <category>devops</category>
-        
-      </item>
-    
-      <item>
-        <title>How Internet Providers get Around War Zones</title>
-        <description>&lt;p&gt;In January 2008, something sharp — mostly likely an errant ship anchor — sliced into two underwater cables in the Mediterranean Sea off the coast of Egypt, near Alexandria. Egypt lost 80% of its internet capacity. But the effects were hardly limited to that country. Slowdowns were reported across Asia. Saudi Arabia lost 40% of its national network. Even Bangladesh, some 3,700 miles away, lost a full third of its connectivity.&lt;/p&gt;
-
-&lt;p&gt;Why did just two cuts lead to such widespread disruption? The classic, and least expensive, way to route internet from South Asia to Europe is via a vast system of submarine fiber optics running from the southern coast of France through the Mediterranean, into the Red Sea via the Suez, and finally out into the Indian Ocean and points beyond. Many of the countries hurt the most by the cuts relied heavily on this path, with only light redundancy coming in from the east — East Asia and beyond the Pacific Ocean, North America — to protect against an event like this.
-And shipping accidents are hardly the only hazards associated with running fiber-optic cable through the Middle East. It’s a very real possibility that an act of war — a bombing or a firefight — in one of the most unstable regions in the world could literally disrupt bulk financial transactions running between skyscrapers in London and Abu Dhabi.&lt;/p&gt;
-
-&lt;p&gt;The economic consequences of such an outage are obvious and devastating, and they don’t only hurt big banks. Take just India, with its booming virtual outsourcing sector, enormously reliant on dependable internet. By some reports, 60 million people in India were affected by the 2008 disruption.
-Jim Cowie, then the head of research and development at Renesys, an internet intelligence company, was taking notes. “It’s very embarrassing to have to explain to stock markets and banks that the internet is out and will be out for weeks,” Cowie said.&lt;/p&gt;
-
-&lt;p&gt;In the wake of the 2008 disruption, companies on both ends of the Mediterranean route began clamoring for redundancy, or the creation of alternative network links from Europe to Asia. And over the past half-decade, a series of enormous European and Asian telecom consortia have done just that, building four new overland fiber-optic pathways to link Europe to the financial hubs of the Persian Gulf and the booming economies of South Asia.&lt;/p&gt;
-
-&lt;p&gt;The new pathways are displayed on the map above, which was made by Dyn, the New Hampshire company that manages traffic for some of the biggest sites on the internet (and that acquired Renesys in May). The new routes are faster than the submarine route — up to 20 milliseconds faster from the Persian Gulf to London, a hugely significant amount of time when it comes to automated financial transactions — and also costlier. But ISPs, banks, and other major companies will readily pay a premium to diversify the source of their internet service and ensure that they aren’t vulnerable to future outages.&lt;/p&gt;
-
-&lt;p&gt;Still, reaching South Asia from Europe by land requires traveling through the Middle East, and none of the new networks can completely avoid regions marked by the kind of conflict that — in addition to every other kind of financial and human cost — could produce a future outage.&lt;/p&gt;
-
-&lt;p&gt;Take the JADI network (displayed in the top image as yellow), which runs for nearly 1,600 miles from Istanbul to Jeddah. Less than a year after JADI traffic became available for purchase, Syria broke out in civil war, and the cable, which runs through Aleppo, has sustained chronic damage, disrupting the network.
-The stakes of these new networks are high, with their own very present, very real dangers: Syrian network technicians whom Cowie describes as “heroic” literally “roll trucks in the middle of a firefight to repair the damage.”
-That’s the most dramatic example. But the other cable paths all face their own challenges. The network represented above in purple is, according to Cowie, in service, though it bypasses the Suez via Israel, a country rapidly descending into violent conflict. The path running through Iraq in orange has experienced difficulties in “coordination and agreement,” according to Cowie, due to a lack of cooperation between the autonomous Kurdish authorities and their Arab counterparts.
-Even the so-called EPEG (Europe-Persian Express Gateway), which has managed to avoid major disruptions despite running through volatile parts of the Caucasus and which Cowie calls “the biggest success story” on the map, passes through a newly turbulent eastern Ukraine (and, notably, leaders who have not been shy to threaten other kinds of pipeline disruption).
-Ultimately, the only way for corporate and institutional interests to make sure that they don’t suffer outages in the future is to make the sources of internet they buy access to as diverse as possible. That way no single act of man or nature proves so catastrophic as to repeat the disastrous disruptions of 2008.
-Or, as Cowie said, “The remedy for all of these is politically neutral”: More cable.&lt;/p&gt;
-</description>
-        <pubDate>Wed, 30 Jul 2014 18:56:39 -0400</pubDate>
-        <link>https://www.websiteops.comhttps://www.websiteops.com/network/2014/07/30/how-internet-providers-get-around-war-zones/</link>
-        <guid isPermaLink="true">https://www.websiteops.comhttps://www.websiteops.com/network/2014/07/30/how-internet-providers-get-around-war-zones/</guid>
-        
-        <category>network</category>
-        
-        <category>enterprise</category>
-        
-        <category>dyn</category>
-        
-        
-        <category>network</category>
         
       </item>
     
