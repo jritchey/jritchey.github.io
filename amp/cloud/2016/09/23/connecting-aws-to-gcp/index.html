@@ -1,0 +1,171 @@
+<!doctype html>
+<html amp lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Connecting AWS to GCP</title>
+    <link rel="canonical" href="https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style amp-custom>
+    </style>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+  </head>
+  <body>
+
+<h1 class="post-title">
+<header class="site-header">
+
+  <div class="wrap">
+
+    <a class="site-title" href="/">WebSiteOps</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"></path>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"></path>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"></path>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/backup/2014-07-31-getting-ready-for-chef+powershell/">Getting Ready for Chef + PowerShell DSC</a>
+        
+          <a class="page-link" href="/about/index.html">About | Joe Ritchey</a>
+        
+          
+        
+          
+        
+          
+        
+          <a class="page-link" href="/amp/web/2014/08/01/adding-open-graph-tags-to-jekyll/">Adding Open Graph Tags to Jekyll</a>
+        
+          <a class="page-link" href="/amp/cloud/2014/08/03/true-power-of-the-cloud/">True Power of the Cloud</a>
+        
+          <a class="page-link" href="/amp/cloud/2015/05/13/connecting-aws-regions-with-openswan/">Connecting AWS Regions with Openswan</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+</h1>
+<span>
+2016-09-23 09:00:00 -0400 - Joe Ritchey
+</span>
+<p>**DISCLAMER - To get this setup working you will need paid account for both AWS and Google Cloud Platform. Fees do apply for both AWS and GCP</p>
+
+<p>Connecting a AWS VPC to Google’s Cloud Platform over VPN is pretty straight forward compared to connecting a <a href="https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">AWS Region to Region</a>.</p>
+
+<p>To get started you will need to sign up for a Google account. From there you can log into the Google Developer Console (http://console.developers.google.com).</p>
+
+<p>From here you have to create what Google calls a project. A project encapsulates most of the Google Cloud products. You can have multiple projects in your account. A project in GCP can be compared to a VPC in AWS, but there is not a complete 1 to 1 mapping with products and features. A project offers a degree of logical separation, authentication and billing to your GCP account. You can get a project setup free. For this post I am focusing in on the Networking and VPN setup. To get going with these features you have to enable billing for your project. Google does free trials in the form of starter credits. This will give you 300$ to use up in 90 days https://cloud.google.com/free-trial/.</p>
+
+<h3 id="quick-start---using-static-routing">Quick Start - Using Static Routing</h3>
+<ul>
+  <li>Start with GCP create a Google Compute Engine VPN gateway.</li>
+  <li>Give your Google Compute Engine VPN a name.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp1.png" alt="" width="475" height="383" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>Select a Network, Region and IP Address. If you do not already have a IP address select New Static IP Address.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp3.png" alt="" width="506" height="245" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>Go to the AWS VPC Dashboard.</li>
+  <li>Create a new Customer Gateway using the Google Compute Engine Static IP address you just created.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp4.png" alt="" width="475" height="246" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>Go the AWS VPN Dashboard</li>
+  <li>Create a new VPN Connection using the AWS Customer Gateway (CGW) you just create. Select Static for the Routing Option. Then enter the subnet for your Google Computer Engine Network.</li>
+  <li>Click Yes Create and you VPN will start to build on the AWS Side.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp7.png" alt="" width="386" height="233" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>Once the AWS VPN tunnel is built you can select the newly built VPN connection and download the Generic VPN configuration.</li>
+  <li>This should download as a text file named with the AWS VPN ID.</li>
+  <li>In this configuration file you will need the AWS endpoints and PSKs</li>
+  <li>Back in the GCP console, under tunnels</li>
+  <li>The Remote peer IP address  will be the Virtual Private Gateway  from the AWS VPN configuration.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp6.png" alt="" width="509" height="562" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>The Shared secret is the PSK from the AWS VPN configuration</li>
+  <li>Select IKEv1 for the IKE version</li>
+  <li>For Remote network IP ranges enter the CIDR range of your VPC subnet in AWS</li>
+  <li>For local subnet network add select your GCP network that you want to connect to.</li>
+  <li>Click Create</li>
+  <li>Now follow these steps again for the second tunnel that AWS provides the AWS VPN configuration.</li>
+  <li>Once you click Create Google Cloud Platform will start building the tunnel and attempt to connect to the AWS Remote peer IP address.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp8.png" alt="" width="410" height="49" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>AWS does not provide any log to help troubleshoot connection issues, fortunately GCP does.</li>
+</ul>
+
+<p><amp-img src="/images/aws_gcp/aws2gcp9.png" alt="" width="304" height="128" layout="responsive"></amp-img></p>
+
+<ul>
+  <li>To troubleshoot issues with AWS to GCP tunnel click on logging in the GCP VPN dashboard. This will take you to the Logging dashboard with a real time output of logs from the VPN tunnel.</li>
+</ul>
+
+
+<footer class="site-footer">
+
+  <div class="wrap">
+
+    <h2 class="footer-heading">WebSiteOps</h2>
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>WebSiteOps</li>
+        <li><a href="mailto:"></a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        
+        
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">The Website Ops blog.</p>
+    </div>
+
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53385832-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</footer>
+
+</body>
+</html>

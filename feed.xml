@@ -5,9 +5,101 @@
     <description>The Website Ops blog.</description>
     <link>https://www.websiteops.com/</link>
     <atom:link href="https://www.websiteops.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 26 Aug 2016 00:20:39 -0400</pubDate>
-    <lastBuildDate>Fri, 26 Aug 2016 00:20:39 -0400</lastBuildDate>
+    <pubDate>Fri, 23 Sep 2016 14:43:00 -0400</pubDate>
+    <lastBuildDate>Fri, 23 Sep 2016 14:43:00 -0400</lastBuildDate>
     <generator>Jekyll v3.2.1</generator>
+    
+      <item>
+        <title>Connecting AWS to GCP</title>
+        <description>&lt;p&gt;**DISCLAMER - To get this setup working you will need paid account for both AWS and Google Cloud Platform. Fees do apply for both AWS and GCP&lt;/p&gt;
+
+&lt;p&gt;Connecting a AWS VPC to Google’s Cloud Platform over VPN is pretty straight forward compared to connecting a &lt;a href=&quot;https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/&quot;&gt;AWS Region to Region&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;To get started you will need to sign up for a Google account. From there you can log into the Google Developer Console (http://console.developers.google.com).&lt;/p&gt;
+
+&lt;p&gt;From here you have to create what Google calls a project. A project encapsulates most of the Google Cloud products. You can have multiple projects in your account. A project in GCP can be compared to a VPC in AWS, but there is not a complete 1 to 1 mapping with products and features. A project offers a degree of logical separation, authentication and billing to your GCP account. You can get a project setup free. For this post I am focusing in on the Networking and VPN setup. To get going with these features you have to enable billing for your project. Google does free trials in the form of starter credits. This will give you 300$ to use up in 90 days https://cloud.google.com/free-trial/.&lt;/p&gt;
+
+&lt;h3 id=&quot;quick-start---using-static-routing&quot;&gt;Quick Start - Using Static Routing&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Start with GCP create a Google Compute Engine VPN gateway.&lt;/li&gt;
+  &lt;li&gt;Give your Google Compute Engine VPN a name.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Select a Network, Region and IP Address. If you do not already have a IP address select New Static IP Address.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Go to the AWS VPC Dashboard.&lt;/li&gt;
+  &lt;li&gt;Create a new Customer Gateway using the Google Compute Engine Static IP address you just created.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Go the AWS VPN Dashboard&lt;/li&gt;
+  &lt;li&gt;Create a new VPN Connection using the AWS Customer Gateway (CGW) you just create. Select Static for the Routing Option. Then enter the subnet for your Google Computer Engine Network.&lt;/li&gt;
+  &lt;li&gt;Click Yes Create and you VPN will start to build on the AWS Side.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Once the AWS VPN tunnel is built you can select the newly built VPN connection and download the Generic VPN configuration.&lt;/li&gt;
+  &lt;li&gt;This should download as a text file named with the AWS VPN ID.&lt;/li&gt;
+  &lt;li&gt;In this configuration file you will need the AWS endpoints and PSKs&lt;/li&gt;
+  &lt;li&gt;Back in the GCP console, under tunnels&lt;/li&gt;
+  &lt;li&gt;The Remote peer IP address  will be the Virtual Private Gateway  from the AWS VPN configuration.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The Shared secret is the PSK from the AWS VPN configuration&lt;/li&gt;
+  &lt;li&gt;Select IKEv1 for the IKE version&lt;/li&gt;
+  &lt;li&gt;For Remote network IP ranges enter the CIDR range of your VPC subnet in AWS&lt;/li&gt;
+  &lt;li&gt;For local subnet network add select your GCP network that you want to connect to.&lt;/li&gt;
+  &lt;li&gt;Click Create&lt;/li&gt;
+  &lt;li&gt;Now follow these steps again for the second tunnel that AWS provides the AWS VPN configuration.&lt;/li&gt;
+  &lt;li&gt;Once you click Create Google Cloud Platform will start building the tunnel and attempt to connect to the AWS Remote peer IP address.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;AWS does not provide any log to help troubleshoot connection issues, fortunately GCP does.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/aws_gcp/aws2gcp9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;To troubleshoot issues with AWS to GCP tunnel click on logging in the GCP VPN dashboard. This will take you to the Logging dashboard with a real time output of logs from the VPN tunnel.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Fri, 23 Sep 2016 09:00:00 -0400</pubDate>
+        <link>https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/</link>
+        <guid isPermaLink="true">https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/</guid>
+        
+        <category>cloud</category>
+        
+        <category>aws</category>
+        
+        <category>google</category>
+        
+        <category>vpn</category>
+        
+        <category>gcp</category>
+        
+        <category>networking</category>
+        
+        
+        <category>cloud</category>
+        
+      </item>
     
       <item>
         <title>Connecting AWS Regions with Openswan</title>
@@ -82,6 +174,10 @@ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html&lt;/
         <category>aws</category>
         
         <category>openswan</category>
+        
+        <category>vpn</category>
+        
+        <category>networking</category>
         
         
         <category>cloud</category>

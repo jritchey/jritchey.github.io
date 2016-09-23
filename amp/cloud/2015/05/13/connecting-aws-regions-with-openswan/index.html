@@ -1,0 +1,161 @@
+<!doctype html>
+<html amp lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Connecting AWS Regions with Openswan</title>
+    <link rel="canonical" href="https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style amp-custom>
+    </style>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+  </head>
+  <body>
+
+<h1 class="post-title">
+<header class="site-header">
+
+  <div class="wrap">
+
+    <a class="site-title" href="/">WebSiteOps</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"></path>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"></path>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"></path>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/backup/2014-07-31-getting-ready-for-chef+powershell/">Getting Ready for Chef + PowerShell DSC</a>
+        
+          <a class="page-link" href="/about/index.html">About | Joe Ritchey</a>
+        
+          
+        
+          
+        
+          
+        
+          <a class="page-link" href="/amp/web/2014/08/01/adding-open-graph-tags-to-jekyll/">Adding Open Graph Tags to Jekyll</a>
+        
+          <a class="page-link" href="/amp/cloud/2014/08/03/true-power-of-the-cloud/">True Power of the Cloud</a>
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+</h1>
+<span>
+2015-05-13 21:00:00 -0400 - Joe Ritchey
+</span>
+<p>Connected AWS regions is not as simple as it should be. Hopefully AWS will someday provide a VPC Peering connection between regions but until then we need to connect regions with EC2 instances. A couple of techniques we have read up on were using 2 EC2 instances. One in the West region connecting to the East region. In another white paper we found Connecting Multiple VPCs with Astaro Security Gateway https://aws.amazon.com/articles/1909971399457482. This worked ok for a while, but seemed to be expensive and not as performant as it should be. <!--more--></p>
+
+<p>For a number of reason the Sophos instances from the AWS MarketPlace no longer kept up with what we needed.
+- They were built on PV and not HVM. This limited the type of instances we could us.
+- Support is limited to the forums unless you pay a additional fee for vendor
+- HA inside of AWS is not a options on the Sophos platform
+- Scripting of HA is limited to outside of the Sophos instances using health check for yet another instance.
+- No ability to enable AWS enhanced networking</p>
+
+<p>Enhanced network is support for SR-IOV, which is short lets a single physical Ethernet adapter show up as multiple adapters and the Hypervisor and thus your EC2 instance does not need as much CPU to push the same amount of network traffic. My understanding is it is like a TCP offload engine for virtualization. Less interrupts are use for networking and can be freed up for your app.
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
+
+<p>If you are not passing very much traffic over the VPN connection you can start with a small instance. As soon as you need to do something like replication a database over VPN connection you will need to start increasing the size of your instance. http://aws.amazon.com/ec2/instance-types/
+I have yet to find documented with the instance types and Network Performance what High, Moderate and Low equates to in bits/sec. The rule of thumb I use is High is about 1Gb/sec and then 1/2 the network speed as the instance size decrease.
+I have also been bit by relying on m3.medium instances too many times and getting poor network performance and ultimately having to re-size up to a larger instance like a c4.large</p>
+
+<p>Now that we have the instance type squared away. We have decided to use Amazon Linux with enhanced networking enabled. Next I am going to choose the IPsec server. For this I choose Openswan. Simply because I have much more experience with Openswan than any of the other services.
+To get Openswan installed on Amazon Linux:</p>
+
+<p><figure class="highlight"><pre><code class="language-bash" data-lang="bash">yum update
+yum install openswan</code></pre></figure></p>
+
+<p>From here I am going to attach this EC2 instance running Openswan in the West to the AWS VPC VPN in the East. Generate you VPN config in the AWS Console on the East coast. For this instance I am using static routing and download the generic VPN config.
+Because the AWS settings are static and AWS generates the PSK for you from here it is pretty straight forward. You just need to set the Openswan connection config to match AWS:</p>
+
+<p>Here is the secret sauce in Openswan
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="s">conn west-2-east</span>
+  <span class="s">type=tunnel</span>
+  <span class="s">authby=secret</span>
+  <span class="s">left=instance_ip</span>
+  <span class="s">leftid=elastic_ip</span>
+  <span class="s">leftnexthop=%defaultroute</span>
+  <span class="s">leftsubnet=west_coast_subnet</span>
+  <span class="s">right=vpg_ip</span>
+  <span class="s">rightnexthop=%defaultroute</span>
+  <span class="s">rightsubnet=east_coast_subnet&lt;/p&gt;</span>
+
+<span class="s">&lt;p&gt;phase2=esp</span>
+  <span class="s">phase2alg=aes128-sha1</span>
+  <span class="s">ike=aes128-sha1</span>
+  <span class="s">ikelifetime=28800s</span>
+  <span class="s">salifetime=3600s</span>
+  <span class="s">pfs=yes</span>
+  <span class="s">auto=start</span>
+  <span class="s">rekey=yes</span>
+  <span class="s">keyingtries=%forever</span>
+  <span class="s">dpddelay=10</span>
+  <span class="s">dpdtimeout=60</span>
+  <span class="s">dpdaction=restart_by_peer</span></code></pre></figure></p>
+
+<p>Sources</p>
+
+<p>Connecting Multiple VPCs with EC2 Instances (IPSec)
+https://aws.amazon.com/articles/5472675506466066</p>
+
+<p>HA NAT:
+http://aws.amazon.com/articles/2781451301784570</p>
+
+<p>Enhanced Networking
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
+
+
+<footer class="site-footer">
+
+  <div class="wrap">
+
+    <h2 class="footer-heading">WebSiteOps</h2>
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>WebSiteOps</li>
+        <li><a href="mailto:"></a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        
+        
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">The Website Ops blog.</p>
+    </div>
+
+  </div>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53385832-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</footer>
+
+</body>
+</html>

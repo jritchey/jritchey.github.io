@@ -5,15 +5,15 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="amphtml" href="https://mercury.postlight.com/amp?url=https://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/">
-    <title>True Power of the Cloud</title>
+    <link rel="amphtml" href="https://mercury.postlight.com/amp?url=https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/">
+    <title>Connecting AWS to GCP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The Website Ops blog.">
-    <link rel="canonical" href="https://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/">
+    <link rel="canonical" href="https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta content="WebSiteOps" property="og:site_name">
     
-      <meta content="True Power of the Cloud" property="og:title">
+      <meta content="Connecting AWS to GCP" property="og:title">
     
     
       <meta content="article" property="og:type">
@@ -22,10 +22,10 @@
       <meta content="The Website Ops blog." property="og:description">
     
     
-      <meta content="https://www.websiteops.com/cloud/2014/08/03/true-power-of-the-cloud/" property="og:url">
+      <meta content="https://www.websiteops.com/cloud/2016/09/23/connecting-aws-to-gcp/" property="og:url">
     
     
-      <meta content="2014-08-03T17:45:00-04:00" property="article:published_time">
+      <meta content="2016-09-23T09:00:00-04:00" property="article:published_time">
       <meta content="https://www.websiteops.com/about/" property="article:author">
     
     
@@ -42,7 +42,13 @@
       
       <meta content="aws" property="article:tag">
       
-      <meta content="gce" property="article:tag">
+      <meta content="google" property="article:tag">
+      
+      <meta content="vpn" property="article:tag">
+      
+      <meta content="gcp" property="article:tag">
+      
+      <meta content="networking" property="article:tag">
       
     
 
@@ -136,19 +142,79 @@
               
                 <div class="post">
   <header class="post-header">
-    <h1>True Power of the Cloud</h1>
-    <p class="meta">Aug 3, 2014 • joe_ritchey</p>
+    <h1>Connecting AWS to GCP</h1>
+    <p class="meta">Sep 23, 2016 • Joe Ritchey</p>
   </header>
 
   <article class="post-content">
-  <p>When comparing the cloud to the old ways, lots of terms are thrown around. ROI, scalibility, rapid development and deployment, ect, ect. The cloud is great for spinning massive amount of infrastructure quickly, but the true power comes with shutting it off. Pay for what you use is the power behind the cloud. Now where I am in the US internet to the home is I pay $XX a month for 50/25MBs. No matter how much I actually use the internet. No given the fact that FIOS really throttles what we can watch anyways. The true limit of how much bandwidth we can consume in a billing period is far lower. Even watch TV from FIOS is artifacted crap.</p>
+  <p>**DISCLAMER - To get this setup working you will need paid account for both AWS and Google Cloud Platform. Fees do apply for both AWS and GCP</p>
 
-<p>But what am I really paying for. Am I paying for 50Mb/s download from everywhere on the internet? Or is it 50Mb/s to Verizon’s switch and from there it is whatever speed Verizon feels like giving you at the time? I’ve never read the fine print on my service contract, but my assumption with home internet has always been you get upto the advertised speed but there is no gaurrenty of speed.</p>
+<p>Connecting a AWS VPC to Google’s Cloud Platform over VPN is pretty straight forward compared to connecting a <a href="https://www.websiteops.com/cloud/2015/05/13/connecting-aws-regions-with-openswan/">AWS Region to Region</a>.</p>
 
-<p>So what would happen if FIOS gave access to all the bandwidth avaible and I paid per GB that I used in a billing period. For me utilies like water and power work this way. When the power goes out I do not pay for those Watts I do not consume. So when my internet goes out I would not pay for those bits. Well that sounds good, right.
-Services like water and power, I do not have a choice on what company I use for these services. There is only one water or power company in my area. When they raise rates I have no choice but to pay. I cannot look at other services. Also each of these utitlies are something we always talk about around conservation. We make a effort to conserve water and power.</p>
+<p>To get started you will need to sign up for a Google account. From there you can log into the Google Developer Console (http://console.developers.google.com).</p>
 
-<p>Would we then have to conserve bits?</p>
+<p>From here you have to create what Google calls a project. A project encapsulates most of the Google Cloud products. You can have multiple projects in your account. A project in GCP can be compared to a VPC in AWS, but there is not a complete 1 to 1 mapping with products and features. A project offers a degree of logical separation, authentication and billing to your GCP account. You can get a project setup free. For this post I am focusing in on the Networking and VPN setup. To get going with these features you have to enable billing for your project. Google does free trials in the form of starter credits. This will give you 300$ to use up in 90 days https://cloud.google.com/free-trial/.</p>
+
+<h3 id="quick-start---using-static-routing">Quick Start - Using Static Routing</h3>
+<ul>
+  <li>Start with GCP create a Google Compute Engine VPN gateway.</li>
+  <li>Give your Google Compute Engine VPN a name.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp1.png" alt="" /></p>
+
+<ul>
+  <li>Select a Network, Region and IP Address. If you do not already have a IP address select New Static IP Address.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp3.png" alt="" /></p>
+
+<ul>
+  <li>Go to the AWS VPC Dashboard.</li>
+  <li>Create a new Customer Gateway using the Google Compute Engine Static IP address you just created.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp4.png" alt="" /></p>
+
+<ul>
+  <li>Go the AWS VPN Dashboard</li>
+  <li>Create a new VPN Connection using the AWS Customer Gateway (CGW) you just create. Select Static for the Routing Option. Then enter the subnet for your Google Computer Engine Network.</li>
+  <li>Click Yes Create and you VPN will start to build on the AWS Side.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp7.png" alt="" /></p>
+
+<ul>
+  <li>Once the AWS VPN tunnel is built you can select the newly built VPN connection and download the Generic VPN configuration.</li>
+  <li>This should download as a text file named with the AWS VPN ID.</li>
+  <li>In this configuration file you will need the AWS endpoints and PSKs</li>
+  <li>Back in the GCP console, under tunnels</li>
+  <li>The Remote peer IP address  will be the Virtual Private Gateway  from the AWS VPN configuration.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp6.png" alt="" /></p>
+
+<ul>
+  <li>The Shared secret is the PSK from the AWS VPN configuration</li>
+  <li>Select IKEv1 for the IKE version</li>
+  <li>For Remote network IP ranges enter the CIDR range of your VPC subnet in AWS</li>
+  <li>For local subnet network add select your GCP network that you want to connect to.</li>
+  <li>Click Create</li>
+  <li>Now follow these steps again for the second tunnel that AWS provides the AWS VPN configuration.</li>
+  <li>Once you click Create Google Cloud Platform will start building the tunnel and attempt to connect to the AWS Remote peer IP address.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp8.png" alt="" /></p>
+
+<ul>
+  <li>AWS does not provide any log to help troubleshoot connection issues, fortunately GCP does.</li>
+</ul>
+
+<p><img src="/images/aws_gcp/aws2gcp9.png" alt="" /></p>
+
+<ul>
+  <li>To troubleshoot issues with AWS to GCP tunnel click on logging in the GCP VPN dashboard. This will take you to the Logging dashboard with a real time output of logs from the VPN tunnel.</li>
+</ul>
 
   </article>
 
