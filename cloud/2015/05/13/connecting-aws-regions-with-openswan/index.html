@@ -54,7 +54,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="/css/clean-blog.min.css" rel="stylesheet">
+    <link href="https://www.websiteops.com/css/clean-blog.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -147,12 +147,14 @@
   <article class="post-content">
   <p>Connected AWS regions is not as simple as it should be. Hopefully AWS will someday provide a VPC Peering connection between regions but until then we need to connect regions with EC2 instances. A couple of techniques we have read up on were using 2 EC2 instances. One in the West region connecting to the East region. In another white paper we found Connecting Multiple VPCs with Astaro Security Gateway https://aws.amazon.com/articles/1909971399457482. This worked ok for a while, but seemed to be expensive and not as performant as it should be. <!--more--></p>
 
-<p>For a number of reason the Sophos instances from the AWS MarketPlace no longer kept up with what we needed.
-- They were built on PV and not HVM. This limited the type of instances we could us.
-- Support is limited to the forums unless you pay a additional fee for vendor
-- HA inside of AWS is not a options on the Sophos platform
-- Scripting of HA is limited to outside of the Sophos instances using health check for yet another instance.
-- No ability to enable AWS enhanced networking</p>
+<p>For a number of reason the Sophos instances from the AWS MarketPlace no longer kept up with what we needed.</p>
+<ul>
+  <li>They were built on PV and not HVM. This limited the type of instances we could us.</li>
+  <li>Support is limited to the forums unless you pay a additional fee for vendor</li>
+  <li>HA inside of AWS is not a options on the Sophos platform</li>
+  <li>Scripting of HA is limited to outside of the Sophos instances using health check for yet another instance.</li>
+  <li>No ability to enable AWS enhanced networking</li>
+</ul>
 
 <p>Enhanced network is support for SR-IOV, which is short lets a single physical Ethernet adapter show up as multiple adapters and the Hypervisor and thus your EC2 instance does not need as much CPU to push the same amount of network traffic. My understanding is it is like a TCP offload engine for virtualization. Less interrupts are use for networking and can be freed up for your app.
 http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html</p>
